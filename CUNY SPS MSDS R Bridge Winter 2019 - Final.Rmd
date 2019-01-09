@@ -4,7 +4,6 @@ author: "S. Deokinanan"
 date: "January 13, 2018"
 output:
   html_document: default
-  word_document: default
 ---
 ***
 #### Background
@@ -18,13 +17,13 @@ Body Mass Index (BMI) is an indicator of the amount of body fat of a person. It 
 
 People with BMI above 25.0 kg/m^2^ have an increased risk of heart disease, type 2 diabetes, hypertension, cardiovascular disease, and many more health risk [1, 3].
 
-Many people are concerned about their weight and health. Talking to their doctors, an exercise coach or even when researching on the internet for diet tips, BMI is very likely to be mentioned. Thus, people tend to check their themselves. However, when compared to measurements taken by trained professionals, discrepancies can occur when one takes these measurements themselves. One example of a source of inconsistency in measurements is the sensitivity and type of home-scales being used. Digital home-scales have been found to provide more accurate and consistent measurements than dial scales [4]. According to a systematic review by Gorber, S.C. *et al*, both men and women are overwhelmingly seen overestimating their height and underestimating their weight [2]. This underestimation of weight is more pronounced in women [1, 3]. As a result, incorrect measurements of the weight and height can lead to incorrect calculation of one's BMI.
+Many people are concerned about their weight and health. Talking to their doctors, an exercise coach or even when researching on the internet for diet tips, BMI is very likely to be mentioned. Thus, people tend to check what their BMI is by themselves. However, when compared to measurements taken by trained professionals, discrepancies can occur when one takes these measurements themselves. One example of a source of inconsistency in measurements is the sensitivity and type of home-scales being used. Digital home-scales have been found to provide more accurate and consistent measurements than dial scales [4]. Moreover, according to a systematic review by Gorber, S.C. *et al*, both men and women are overwhelmingly seen overestimating their height and underestimating their weight [2]. This underestimation of weight is more pronounced in women [1, 3]. As a result, estimation that deviates further than the actual measurements of the weight and height can lead to incorrect calculation of one's BMI.
 
 **The research question**  
-Therefore, this project aims answer:
+Therefore, this project aims to answer:
 
-1. How common is it that an individuals can be mislead by their BMI measurements because of incorrect measurements of either their weight or height or both?
-2. Is there any trend between a self-reported BMI and the actual BMI, distinguished by the gender?
+1. How common is it that an individuals can be mislead by their BMI measurements because of estimated measurements of either their weight or height or both?
+2. Is there any trend between a self-reported BMI and the actual BMI, distinguished by gender?
 
 ***
 #### Retrieving the Dataset
@@ -74,9 +73,9 @@ Actual Height      | 170.6 cm | 164.7 cm | 178.0 cm
 Reported Height    | 168.5 cm | 162.2 cm | 176.3 cm
 *Height difference*|   2.1 cm |   2.5 cm |   1.7 cm
 
-The table suggest that both reported weight and height for female are underestimated when compared to their actual measurements, which is consistent with the literature. Whereas, for males, only height is underestimated when compared to their actual height. 
+The table suggest that both the self-reported weight and height for females were underestimated when compared to their actual measurements, which is consistent with the literature. Whereas, for males, only height is underestimated when compared to their actual height. 
 
-From the scatter plots below, it is clearer that there are discrepancies among the reported measurements and the actual weight and height.
+From the scatter plots below, it is clearer that there are discrepancies among the self-reported measurements and the actual weight and height.
 ```{r}
 library(ggplot2)
 
@@ -104,32 +103,31 @@ BodyHW[["repBMI"]] <- BodyHW$repwt/(BodyHW$repmht^2)
 ```
  
 #### The variablity of the actual and self-reported BMI by gender.
-Looking at the box plots for the both the actual and self-reported BMI, males presented to have a greater variability than females. Moreover, the median for the self-reported BMI by males has a noticeable shift when compared to actual BMI by males.
+Looking at the box plots for the both the *actual* and *self-reported* BMI, males presented to have a greater variability than females. Moreover, the median for the self-reported BMI by males has a much noticeable shift when compared to actual BMI by males.
 
 ```{r}
 ggrepBMI <- ggplot(BodyHW, aes(x=sex, y=repBMI, na.rm = TRUE))
-ggrepBMI + geom_boxplot(na.rm = TRUE) + labs(title="BMI based on Self-Reported Measurements distributed by Sex", x="Sex", y="Self reported BMI") 
+ggrepBMI + geom_boxplot(na.rm = TRUE) + labs(title="BMI based on Self-Reported Measurements distributed by Gender", x="sex", y="Self reported BMI") 
 
 ggABMI <- ggplot(BodyHW, aes(x=sex, y=BMI))
-ggABMI + geom_boxplot() + labs(title="BMI based on Actual Measurements distributed by Sex", x="Sex", y="Actual BMI") 
+ggABMI + geom_boxplot() + labs(title="BMI based on Actual Measurements distributed by Gender", x="sex", y="Actual BMI") 
 ```
 
 ***
-#### Identifying the health status for where the participants can be placed based on their BMIs calculated with the actual and self-reported measurements.
+#### Identifiying the health status of participants based on their BMIs calculated from the actual and self-reported measurements.
 
 ```{r}
 # Categorizing the BMI calculated from the actual measurements.
 BodyHW[["ActualCategory"]] <- ifelse(BodyHW$BMI < 18.50,"underweight", 
-                              ifelse(BodyHW$BMI > 18.50 & BodyHW$BMI < 24.90, "healthy",
-                              ifelse(BodyHW$BMI > 24.90 & BodyHW$BMI < 30.0, "overweight", "obese")))
+                              ifelse(BodyHW$BMI >= 18.50 & BodyHW$BMI < 25.0, "healthy",
+                              ifelse(BodyHW$BMI >= 25.0 & BodyHW$BMI < 30.0, "overweight", "obese")))
 
 # Categorizing the BMI calculated from the self-reported measurements.
 BodyHW[["repCategory"]] <- ifelse(BodyHW$repBMI < 18.50,"underweight", 
-                           ifelse(BodyHW$repBMI > 18.50 & BodyHW$repBMI < 24.90, "healthy",
-                           ifelse(BodyHW$repBMI > 24.90 & BodyHW$repBMI < 30.0, "overweight", "obese")))
+                           ifelse(BodyHW$repBMI >= 18.50 & BodyHW$repBMI < 25.0, "healthy",
+                           ifelse(BodyHW$repBMI >= 25.0 & BodyHW$repBMI < 30.0, "overweight", "obese")))
 ```
-
-After determining the participant's health status, the histograms show that are many self-reported BMI that differences from the actual BMI significantly. 
+After determining what a participant's health status would be based on their BMIs, the histograms show that are many self-reported BMI that differs from the actual BMI significantly. 
 
 ```{r}
 ggrepBMI1 <- ggplot(BodyHW, aes(x=repBMI, fill=repCategory, na.rm = TRUE))
@@ -139,9 +137,9 @@ ggABMI2 <- ggplot(BodyHW, aes(x=BMI, fill=ActualCategory))
 ggABMI2 + geom_histogram(bins=40) + labs(title="BMI based on Actual Measurements", x="Actual BMI", y="Count")
 ```
 
-As a result, the table below highlights that there could have been 8 reports of *healthy* BMI when in fact they are actually 3 *overweight* and 5 *underweight* individuals. Having the belief that one is health when in fact they are not, can lead to healthy risk. Other cases could have included 8 reports of *overweight* and 1 report of *underweight* when in fact they are *healthy*, and 2 reports of *obese* when they are *overweight.*
+As a result, the table below highlights that there are 8 reports of *healthy* BMI when in fact they are actually 3 *overweight* and 5 *underweight* participants. Having the belief that one is healthy when in fact they are not, can lead to more serious risk because they might not pay attention to their health if there is not a need. Other cases included 8 reports of *overweight* and 1 report of *underweight* when in fact they are *healthy*, and 2 reports of *obese* when they are *overweight*.
 
-Moreover, the table reveals that males would have more likely report *overweight* when in fact they are *healthy*, and vice versa. Females, however, would have tend to report *healthy* when they are in fact *underweight.*
+Moreover, the table reveals that males are more likely to be under the impression that they are *overweight* when in fact they are *healthy*, and vice versa. Females, however, would have thought to be *healthy* when they are in fact *underweight*.
 
 ```{r}
 rows<-which(BodyHW$ActualCategory!=BodyHW$repCategory)
@@ -151,7 +149,7 @@ table(BodyHW[rows, c("sex","repCategory","ActualCategory")])
 ***
 #### Conclusion
 
-In conclusion, 10% of the individuals could have been mislead by their BMI measurements because of incorrect measurements of either their weight or height or both. Three percent of males could have been under the impression that they are *overweight* when they are instead *healthy*, and 2% of the females could have been mislead to be *healthy* when they are instead *underweight*. However, this does not imply that, for example, an incorrect BMI of *obese* for *overweight*, is not as alarming. In such cases, individuals should still pay close attention to their consumption and exercise activities. This is also the same recommendation for individuals who had incorrect BMI of *underweight* but are *healthy*, individuals should remain determined to maintain a healthy status, well between 18.5 kg/m^2^ to 24.9 kg/m^2^, particularly those at the cut-offs between categories and especially those who are *obese*.
+In conclusion, 10% of the individuals can been mislead by their BMI measurements because of incorrect estimation of either their weight or height or both. Three percent of males could have been under the impression that they are *overweight* when they are instead *healthy*, and 2% of the females could have been misled to be *healthy* when they are instead *underweight*. However, this does not imply that, for example, an incorrect BMI categorization of *obese* for *overweight*, is not as alarming. In such cases, individuals should still pay close attention to their consumption and exercise activities. This is also the recommendation for individuals who had incorrect BMI categorization of *underweight* but are *healthy*. It is key that every individual, no matter their BMI category, should remain determined to maintain a BMI status of *healthy*, i.e. well between 18.5 kg/m^2^ to 24.9 kg/m^2^, particularly those at the cut-offs between categories and especially those who are *obese*.
 
 ***
 ***
